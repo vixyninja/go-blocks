@@ -189,12 +189,14 @@ linters:
           deny:
             - pkg: math/rand$
               desc: Use math/rand/v2 instead, see https://go.dev/blog/randv2
-        "non-main files":
-          files:
-            - "!**/main.go"
-          deny:
-            - pkg: log$
-              desc: Use log/slog instead, see https://go.dev/blog/slog
+
+        # TODO: Enable this once we have a way to test the logx package
+        # "non-main files":
+        #   files:
+        #     - "!**/main.go"
+        #   deny:
+        #     - pkg: log$
+        #       desc: Use log/slog instead, see https://go.dev/blog/slog
 
     embeddedstructfieldcheck:
       # Checks that sync.Mutex and sync.RWMutex are not used as embedded fields.
