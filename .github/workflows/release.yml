@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+           fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -33,8 +35,19 @@ jobs:
       - name: Create GitHub Release (no artifacts)
         uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            **Auto Release** for Go package `${{ github.repository }}`
+            
+            Commit: `${{ github.sha }}`
+            
+            Changes since last release:
+            ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
           generate_release_notes: true
+          make_latest: true
+          fail_on_unmatched_files: true
+          body_path: CHANGELOG.md
