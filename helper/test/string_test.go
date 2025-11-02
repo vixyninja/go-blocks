@@ -1,10 +1,10 @@
-package helperx_test
+package helper_test
 
 import (
 	"reflect"
 	"testing"
 
-	helperx "github.com/vixyninja/go-blocks/helperx"
+	helperx "github.com/vixyninja/go-blocks/helper"
 )
 
 func TestIsEmpty_IsNotEmpty(t *testing.T) {

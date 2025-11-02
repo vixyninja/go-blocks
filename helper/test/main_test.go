@@ -1,4 +1,4 @@
-package helperx
+package helper_test
 
 import (
 	"os"

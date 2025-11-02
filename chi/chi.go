@@ -1,4 +1,4 @@
-package chix
+package chi
 
 import (
 	"context"

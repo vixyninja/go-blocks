@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/vixyninja/go-blocks/chix"
+	"github.com/vixyninja/go-blocks/chi"
 	"github.com/vixyninja/go-blocks/logx"
 )
 
 func main() {
-	server := chix.NewServer(
-		chix.WithPrintRoutes(true),
-		chix.WithLogger(logx.NewDefaultLogger()),
-		chix.WithAddr(":5098"),
+	server := chi.NewServer(
+		chi.WithPrintRoutes(true),
+		chi.WithLogger(logx.NewDefaultLogger()),
+		chi.WithAddr(":5098"),
 	)
 
 	server.Router().Get("/ping", func(w http.ResponseWriter, _ *http.Request) {
