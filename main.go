@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/vixyninja/go-blocks/pkg/chix"
-	"github.com/vixyninja/go-blocks/pkg/logx"
+	"github.com/vixyninja/go-blocks/chix"
+	"github.com/vixyninja/go-blocks/logx"
 )
 
 func main() {
