@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sort"
 	"strings"
 )
 
@@ -74,9 +75,15 @@ func BuildURL(baseURL string, params map[string]string) string {
 		return baseURL
 	}
 
+	keys := make([]string, 0, len(params))
+	for k := range params {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
 	var queryParts []string
-	for key, value := range params {
-		queryParts = append(queryParts, fmt.Sprintf("%s=%s", key, value))
+	for _, key := range keys {
+		queryParts = append(queryParts, fmt.Sprintf("%s=%s", key, params[key]))
 	}
 
 	return baseURL + "?" + strings.Join(queryParts, "&")

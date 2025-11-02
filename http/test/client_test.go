@@ -399,7 +399,7 @@ func TestBuildURL(t *testing.T) {
 		{
 			"https://api.example.com",
 			map[string]string{"page": "1", "limit": "10"},
-			"https://api.example.com?page=1&limit=10",
+			"https://api.example.com?limit=10&page=1",
 		},
 	}
 
