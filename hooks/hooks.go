@@ -19,9 +19,9 @@ type Hook struct {
 	mu        sync.Mutex
 }
 
-func New(tineout time.Duration) *Hook {
+func New(timeout time.Duration) *Hook {
 	return &Hook{
-		timeout:   tineout,
+		timeout:   timeout,
 		callbacks: make([]HookCallback, 0),
 	}
 }
