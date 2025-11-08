@@ -143,7 +143,7 @@ func (s *Server) Run() error {
 	if s.printRoutes {
 		s.PrintRoutes()
 	}
-	return s.httpServer.ListenAndServe()
+	return s.HTTPServer().ListenAndServe()
 }
 
 func (s *Server) PrintRoutes(excludePatterns ...string) {
