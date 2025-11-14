@@ -9,7 +9,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.43.0
-	golang.org/x/mod v0.28.0
+	golang.org/x/mod v0.29.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
