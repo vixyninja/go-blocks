@@ -1,26 +1,36 @@
 /**
  * @ Author: vixyninja
  * @ Create Time: 2025-11-14 09:45:16
- * @ Modified time: 2025-11-14 11:05:57
+ * @ Modified time: 2025-11-14 11:30:18
  * @ Description: Root command
  */
 
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+	"github.com/vixyninja/go-blocks/logx"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "cli-gen",
-	Short: "cli-gen",
-	Long:  `cli-gen`,
+	Use:   "cli",
+	Short: "Internal development CLI",
+	Long: `cli is the internal command-line tool that provides helper commands
+for working with this project. It includes tools for generation,
+formatting, utilities, migrations, and other developer tasks.`,
+	Example: `
+  # Show all commands
+  cli --help
+`,
 }
 
 // Execute runs the root Cobra command.
 func Execute() {
+	fmt.Println(logo)
 	err := rootCmd.Execute()
 	if err != nil {
-		panic(err)
+		logx.NewDefaultLogger().Fatal(rootCmd.Context(), "Error: "+err.Error())
 	}
 }
