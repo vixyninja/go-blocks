@@ -5,6 +5,7 @@ issues:
 
 formatters:
   enable:
+    - gofumpt
     - goimports # checks if the code and import statements are formatted according to the 'goimports' command
     - golines # checks if code is formatted, and fixes long lines
     - gci # checks if code and import statements are formatted, with additional rules
@@ -12,12 +13,41 @@ formatters:
     - swaggo # formats swaggo comments
 
   settings:
+    gci:
+      # Section configuration to compare against.
+      # Section names are case-insensitive and may contain parameters in ().
+      # The default order of sections is `standard > default > custom > blank > dot > alias > localmodule`.
+      # If `custom-order` is `true`, it follows the order of `sections` option.
+      # Default: ["standard", "default"]
+      sections:
+        - standard # Standard section: captures all standard packages.
+        - default # Default section: contains all imports that could not be matched to another section type.
+        - prefix(github.com/vixyninja/go-blocks) # Custom section: groups all imports with the specified Prefix.
+        - blank # Blank section: contains all blank imports. This section is not present unless explicitly enabled.
+        - dot # Dot section: contains all dot imports. This section is not present unless explicitly enabled.
+        - alias # Alias section: contains all alias imports. This section is not present unless explicitly enabled.
+        - localmodule # Local module section: contains all local packages. This section is not present unless explicitly enabled.
+      # Checks that no inline comments are present.
+      # Default: false
+      no-inline-comments: true
+      # Checks that no prefix comments (comment lines above an import) are present.
+      # Default: false
+      no-prefix-comments: true
+      # Enable custom order of sections.
+      # If `true`, make the section order the same as the order of `sections`.
+      # Default: false
+      custom-order: true
+      # Drops lexical ordering for custom sections.
+      # Default: false
+      no-lex-order: true
     goimports:
       local-prefixes:
         - github.com/vixyninja/go-blocks
-
+    gofumpt:
+      extra-rules: true
     golines:
       max-len: 120
+      
 
 linters:
   enable:
@@ -38,11 +68,11 @@ linters:
     - exhaustive # checks exhaustiveness of enum switch statements
     - exptostd # detects functions from golang.org/x/exp/ that can be replaced by std functions
     - fatcontext # detects nested contexts in loops
-    - forbidigo # forbids identifiers
+    # - forbidigo # forbids identifiers
     - funcorder # checks the order of functions, methods, and constructors
     - funlen # tool for detection of long functions
     - gocheckcompilerdirectives # validates go compiler directive comments (//go:)
-    - gochecknoglobals # checks that no global variables exist
+    # - gochecknoglobals # checks that no global variables exist
     - gochecknoinits # checks that no init functions are present in Go code
     - gochecksumtype # checks exhaustiveness on Go "sum types"
     - gocognit # computes and checks the cognitive complexity of functions
@@ -414,35 +444,12 @@ linters:
       os-temp-dir: true
 
   exclusions:
-    # Log a warning if an exclusion rule is unused.
-    # Default: false
     warn-unused: true
-    # Predefined exclusion rules.
-    # Default: []
     presets:
       - std-error-handling
       - common-false-positives
-    # Excluding configuration per-path, per-linter, per-text and per-source.
     rules:
-      - source: "TODO"
-        linters: [godot]
-      - text: "should have a package comment"
-        linters: [revive]
-      - text: 'exported \S+ \S+ should have comment( \(or a comment on this block\))? or be unexported'
-        linters: [revive]
-      - text: 'package comment should be of the form ".+"'
-        source: "// ?(nolint|TODO)"
-        linters: [revive]
-      - text: 'comment on exported \S+ \S+ should be of the form ".+"'
-        source: "// ?(nolint|TODO)"
-        linters: [revive, staticcheck]
-      - path: '_test\.go'
+      - path: init\.go
         linters:
-          - bodyclose
-          - dupl
-          - errcheck
-          - funlen
-          - goconst
-          - gosec
-          - noctx
-          - wrapcheck
+          - gochecknoinits
+          - nolintlint
