@@ -1,0 +1,65 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: Main entry point for {{.ProjectName}}
+ */
+
+package main
+
+import (
+	"context"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"{{.ModulePath}}/internal/handler"
+	"{{.ModulePath}}/internal/service"
+)
+
+func main() {
+	// Initialize service
+	svc := service.New()
+	
+	// Initialize handler
+	h := handler.New(svc)
+
+	// Setup HTTP server
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", h.Health)
+	mux.HandleFunc("/", h.Handle)
+
+	server := &http.Server{
+		Addr:    ":" + "{{.Port}}",
+		Handler: mux,
+	}
+
+	// Start server in goroutine
+	go func() {
+		log.Printf("Server starting on port %s", "{{.Port}}")
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Server failed to start: %v", err)
+		}
+	}()
+
+	// Wait for interrupt signal
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down server...")
+
+	// Graceful shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
+	}
+
+	log.Println("Server exited")
+}
+

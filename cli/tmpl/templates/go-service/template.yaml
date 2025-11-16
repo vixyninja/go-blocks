@@ -1,0 +1,23 @@
+name: go-service
+description: A basic Go service template with HTTP server
+version: 1.0.0
+variables:
+  - name: ProjectName
+    description: Name of the project
+    required: true
+    type: string
+  - name: ModulePath
+    description: Go module path (e.g., github.com/user/project)
+    required: true
+    type: string
+  - name: Port
+    description: HTTP server port
+    required: false
+    default: "8080"
+    type: string
+  - name: Author
+    description: Author name
+    required: false
+    default: "vixyninja"
+    type: string
+
