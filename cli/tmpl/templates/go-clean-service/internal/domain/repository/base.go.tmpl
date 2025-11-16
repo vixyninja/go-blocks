@@ -1,0 +1,30 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: Base repository interface for {{.ServiceName}}
+ */
+ 
+package repository
+
+import (
+	"context"
+)
+
+// BaseRepository defines common repository operations
+type BaseRepository[T any, ID comparable] interface {
+	// Create creates a new entity
+	Create(ctx context.Context, entity *T) error
+
+	// GetByID retrieves an entity by ID
+	GetByID(ctx context.Context, id ID) (*T, error)
+
+	// Update updates an existing entity
+	Update(ctx context.Context, entity *T) error
+
+	// Delete soft deletes an entity by ID
+	Delete(ctx context.Context, id ID) error
+
+	// List retrieves all entities with pagination
+	List(ctx context.Context, limit, offset int) ([]T, error)
+}

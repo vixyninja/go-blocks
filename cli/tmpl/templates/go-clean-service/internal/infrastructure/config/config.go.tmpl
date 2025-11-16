@@ -1,0 +1,131 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: Config loading logic for {{.ServiceName}}
+ */
+
+package config
+
+import (
+	"fmt"
+	"os"
+	"strings"
+
+	"github.com/spf13/viper"
+)
+
+var globalConfig Config
+
+func Load() (Config, error) {
+	mode := os.Getenv("ENV")
+	if mode == "" {
+		mode = EnvironmentDevelopment
+	}
+
+	fmt.Printf("[infrastructure.config] Loading configuration for environment: %s\n", mode)
+
+	var path string
+	switch strings.ToLower(mode) {
+	case EnvironmentDevelopment:
+		path = ".env.dev"
+	case EnvironmentStaging:
+		path = ".env.stag"
+	case EnvironmentProduction:
+		path = ".env.prod"
+	default:
+		return nil, fmt.Errorf("[infrastructure.config] unsupported environment: %s", mode)
+	}
+
+	v := viper.New()
+	bindEnv(v)
+
+	v.SetConfigFile(path)
+	v.SetConfigType("env")
+
+	if err := v.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			return nil, fmt.Errorf("[infrastructure.config] failed to read config file: %w", err)
+		}
+	}
+
+	v.AutomaticEnv()
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	// Unmarshal config
+	config := &AppConfig{}
+	if err := v.Unmarshal(config); err != nil {
+		return nil, fmt.Errorf("[infrastructure.config] failed to unmarshal config: %w", err)
+	}
+
+	// Validate config
+	if err := config.Validate(); err != nil {
+		return nil, fmt.Errorf("[infrastructure.config] config validation failed: %w", err)
+	}
+
+	globalConfig = config
+	return config, nil
+}
+
+func Get() Config {
+	if globalConfig == nil {
+		panic("[infrastructure.config] config not loaded")
+	}
+	return globalConfig
+}
+
+// bindEnv binds the environment variables to the viper instance
+func bindEnv(v *viper.Viper) {
+	_ = v.BindEnv("env", "ENV")
+
+	// Server
+	_ = v.BindEnv("server.port", "SERVER_PORT")
+	_ = v.BindEnv("server.tz", "SERVER_TZ")
+	_ = v.BindEnv("server.mode", "SERVER_MODE")
+	_ = v.BindEnv("server.timeout", "SERVER_TIMEOUT")
+	_ = v.BindEnv("server.read_timeout", "SERVER_READ_TIMEOUT")
+	_ = v.BindEnv("server.write_timeout", "SERVER_WRITE_TIMEOUT")
+	_ = v.BindEnv("server.max_header_bytes", "SERVER_MAX_HEADER_BYTES")
+	_ = v.BindEnv("server.allowed_origins", "SERVER_ALLOWED_ORIGINS")
+	_ = v.BindEnv("server.enable_cors", "SERVER_ENABLE_CORS")
+	_ = v.BindEnv("server.enable_pprof", "SERVER_ENABLE_PPROF")
+	_ = v.BindEnv("server.enable_metrics", "SERVER_ENABLE_METRICS")
+
+	// Database
+	_ = v.BindEnv("database.host", "DATABASE_HOST")
+	_ = v.BindEnv("database.port", "DATABASE_PORT")
+	_ = v.BindEnv("database.user", "DATABASE_USER")
+	_ = v.BindEnv("database.password", "DATABASE_PASSWORD")
+	_ = v.BindEnv("database.dbname", "DATABASE_DBNAME")
+	_ = v.BindEnv("database.sslmode", "DATABASE_SSLMODE")
+	_ = v.BindEnv("database.tz", "DATABASE_TZ")
+	_ = v.BindEnv("database.max_idle_conns", "DATABASE_MAX_IDLE_CONNS")
+	_ = v.BindEnv("database.max_open_conns", "DATABASE_MAX_OPEN_CONNS")
+	_ = v.BindEnv("database.conn_max_lifetime", "DATABASE_CONN_MAX_LIFETIME")
+	_ = v.BindEnv("database.auto_migrate", "DATABASE_AUTO_MIGRATE")
+	_ = v.BindEnv("database.log_level", "DATABASE_LOG_LEVEL")
+
+	// Log
+	_ = v.BindEnv("log.level", "LOG_LEVEL")
+	_ = v.BindEnv("log.format", "LOG_FORMAT")
+	_ = v.BindEnv("log.output", "LOG_OUTPUT")
+	_ = v.BindEnv("log.file_path", "LOG_FILE_PATH")
+	_ = v.BindEnv("log.max_size", "LOG_MAX_SIZE")
+	_ = v.BindEnv("log.max_backups", "LOG_MAX_BACKUPS")
+	_ = v.BindEnv("log.max_age", "LOG_MAX_AGE")
+	_ = v.BindEnv("log.compress", "LOG_COMPRESS")
+}
+
+
+func (c *AppConfig) Validate() error {
+	if c.Server.Port == "" {
+		return fmt.Errorf("[infrastructure.config] server.port is required")
+	}
+	if c.Database.Host == "" {
+		return fmt.Errorf("[infrastructure.config] database.host is required")
+	}
+	if c.Database.DBName == "" {
+		return fmt.Errorf("[infrastructure.config] database.dbname is required")
+	}
+	return nil
+}

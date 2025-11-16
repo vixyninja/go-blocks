@@ -1,0 +1,15 @@
+#!/bin/sh
+
+ENV=${ENV:-dev}
+
+echo "[entrypoint] Starting app with ENV=$ENV"
+
+if [ -f .env.${ENV} ]; then
+    export $(grep -v '^#' .env.${ENV} | xargs)
+fi
+
+# Run migrations
+./app migrate || true
+
+exec ./app server
+

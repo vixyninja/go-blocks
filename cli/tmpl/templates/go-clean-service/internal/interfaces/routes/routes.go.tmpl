@@ -1,0 +1,51 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: Routes setup for {{.ServiceName}}
+ */
+
+package routes
+
+import (
+	"encoding/json"
+	"net/http"
+
+	"{{.ModulePath}}/internal/infrastructure/database"
+	// TODO: Import your repositories, use cases, and handlers
+	// "{{.ModulePath}}/internal/infrastructure/repository"
+	// "{{.ModulePath}}/internal/interfaces/transport/http"
+	// "{{.ModulePath}}/internal/usecase"
+)
+
+// SetupRoutes configures and returns the HTTP handler with all routes
+func SetupRoutes(db database.Database) http.Handler {
+	mux := http.NewServeMux()
+
+	// TODO: Initialize repositories, use cases, and handlers
+	// Example:
+	// repo := repository.NewRepository(db.DB())
+	// uc := usecase.NewUseCase(repo)
+	// handler := http.NewHandler(uc)
+
+	// TODO: Setup API routes
+	// Example:
+	// mux.HandleFunc("/api/v1/resources", handler.Create)
+	// mux.HandleFunc("/api/v1/resources/", handler.GetByID)
+	// mux.HandleFunc("/api/v1/resources/{id}", handler.Update)
+	// mux.HandleFunc("/api/v1/resources/{id}", handler.Delete)
+	// mux.HandleFunc("/api/v1/resources", handler.List)
+
+	// Health check
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	})
+
+	return mux
+}
+

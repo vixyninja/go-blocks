@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+
+ENV=${1:-dev}
+
+ENV_FILE="build/.env.${ENV}"
+
+if [ ! -f "$ENV_FILE" ]; then
+  echo "File environment not found: $ENV_FILE"
+  exit 1
+fi
+
+echo "Building environment: $ENV"
+echo "Using env file: $ENV_FILE"
+
+cd build
+ENV=$ENV docker compose --env-file ".env.${ENV}" up --build -d
+
+echo ""
+echo "Build & deploy completed for environment: $ENV"
+echo "Containers running:"
+docker ps --filter "name={{.ServiceName}}-${ENV}"
+

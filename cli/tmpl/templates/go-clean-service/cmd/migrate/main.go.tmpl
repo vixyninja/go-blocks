@@ -1,0 +1,38 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: Database migrations for {{.ServiceName}}
+ */
+ 
+package main
+
+import (
+	"log"
+
+	cfgpkg "{{.ModulePath}}/internal/infrastructure/config"
+	"{{.ModulePath}}/internal/infrastructure/database"
+)
+
+func main() {
+	// Load configuration
+	cfg, err := cfgpkg.Load()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Initialize database
+	db, err := database.NewPostgres(cfg.GetDatabase(), cfg.GetLog().Level)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	// Run migrations
+	log.Println("Running database migrations...")
+	// TODO: Implement migration logic
+	// Example: db.AutoMigrate(&entity.YourEntity{})
+
+	log.Println("Migrations completed successfully")
+}
+

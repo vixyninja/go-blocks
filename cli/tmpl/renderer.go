@@ -61,7 +61,8 @@ func RenderTemplate(tmpl *Template, variables map[string]any) ([]RenderedFile, e
 
 			// Also render the target path if it contains template variables
 			if strings.Contains(file.TargetPath, "{{") {
-				pathTmpl, err := template.New("path").Funcs(funcMap).Parse(file.TargetPath)
+				normalizedPath := normalizePathTemplate(file.TargetPath)
+				pathTmpl, err := template.New("path").Funcs(funcMap).Parse(normalizedPath)
 				if err != nil {
 					return nil, fmt.Errorf("failed to parse path template %s: %w", file.TargetPath, err)
 				}
@@ -76,7 +77,8 @@ func RenderTemplate(tmpl *Template, variables map[string]any) ([]RenderedFile, e
 		} else {
 			// Use content as-is, but still render path if needed
 			if strings.Contains(file.TargetPath, "{{") {
-				pathTmpl, err := template.New("path").Funcs(funcMap).Parse(file.TargetPath)
+				normalizedPath := normalizePathTemplate(file.TargetPath)
+				pathTmpl, err := template.New("path").Funcs(funcMap).Parse(normalizedPath)
 				if err != nil {
 					return nil, fmt.Errorf("failed to parse path template %s: %w", file.TargetPath, err)
 				}
@@ -164,4 +166,41 @@ func toPascalCase(s string) string {
 
 func toKebabCase(s string) string {
 	return strings.ToLower(strings.ReplaceAll(s, " ", "-"))
+}
+
+// normalizePathTemplate converts {{Variable}} to {{.Variable}} for Go template parsing
+func normalizePathTemplate(path string) string {
+	// Simple approach: replace {{Variable}} with {{.Variable}} but skip if already has dot
+	result := path
+	start := 0
+	for {
+		openIdx := strings.Index(result[start:], "{{")
+		if openIdx == -1 {
+			break
+		}
+		openIdx += start
+		closeIdx := strings.Index(result[openIdx:], "}}")
+		if closeIdx == -1 {
+			break
+		}
+		closeIdx += openIdx
+
+		// Extract content between {{ and }}
+		content := result[openIdx+2 : closeIdx]
+
+		// If it doesn't start with . and doesn't contain spaces or special chars, add .
+		if !strings.HasPrefix(content, ".") && len(content) > 0 {
+			// Simple check: if it looks like a variable name (no spaces, no dots, no special chars)
+			if !strings.ContainsAny(content, " .()[]{}") {
+				// Replace {{Variable}} with {{.Variable}}
+				result = result[:openIdx+2] + "." + content + result[closeIdx:]
+				start = closeIdx + 3 // +3 because we added a dot
+			} else {
+				start = closeIdx + 2
+			}
+		} else {
+			start = closeIdx + 2
+		}
+	}
+	return result
 }

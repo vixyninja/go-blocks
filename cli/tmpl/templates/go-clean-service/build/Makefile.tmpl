@@ -1,0 +1,26 @@
+SHELL := /bin/bash
+BASEDIR = $(shell pwd)
+
+PROJECT_NAME := "{{.ModulePath}}"
+PKG := "$(PROJECT_NAME)"
+GO_FILES := $(shell find .. -name '*.go' | grep -v _test.go)
+
+export PATH        := $(shell go env GOPATH)/bin:$(PATH)
+export GOPATH      := $(shell go env GOPATH)
+export GO111MODULE := on
+
+.PHONY: help
+help: ## Show this help message
+	@echo 'Usage: make [target]'
+	@echo ''
+	@echo 'Available targets:'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+.PHONY: dep
+dep: ## Download dependencies
+	@cd .. && go mod download
+
+.PHONY: test
+test: ## Run tests
+	@cd .. && go test -v ./tests/...
+
