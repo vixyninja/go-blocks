@@ -106,7 +106,7 @@ Example:
 			return fmt.Errorf("failed to generate project: %w", err)
 		}
 
-		fmt.Printf("✓ Project '%s' generated successfully!\n", projectName)
+		fmt.Printf("Project '%s' generated successfully!\n", projectName)
 		return nil
 	},
 }
