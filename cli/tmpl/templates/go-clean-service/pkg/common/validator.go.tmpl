@@ -1,0 +1,46 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: Validator for {{.ServiceName}}
+ */
+
+package common
+
+import (
+	"strconv"
+)
+
+// PaginationParams represents pagination parameters
+type PaginationParams struct {
+	Offset int
+	Limit  int
+}
+
+// ParsePagination parses pagination parameters from query string
+func ParsePagination(offsetStr, limitStr string, defaultLimit int) PaginationParams {
+	offset, _ := strconv.Atoi(offsetStr)
+	limit, _ := strconv.Atoi(limitStr)
+
+	if limit <= 0 {
+		limit = defaultLimit
+	}
+	if limit > 100 {
+		limit = 100 // Max limit
+	}
+	if offset < 0 {
+		offset = 0
+	}
+
+	return PaginationParams{
+		Offset: offset,
+		Limit:  limit,
+	}
+}
+
+// ValidateEmail validates email format (basic validation)
+func ValidateEmail(email string) bool {
+	// TODO: Implement proper email validation
+	return len(email) > 0 && len(email) < 255
+}
+

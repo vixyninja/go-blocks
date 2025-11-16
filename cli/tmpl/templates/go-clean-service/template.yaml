@@ -1,0 +1,27 @@
+name: go-clean-service
+description: A Go service template following Clean Architecture principles
+version: 1.0.0
+variables:
+  - name: ServiceName
+    description: Lowercase service name (e.g., "user", "product")
+    required: true
+    type: string
+  - name: ServiceNameTitle
+    description: Title case service name (e.g., "User", "Product")
+    required: true
+    type: string
+  - name: ModulePath
+    description: Go module path (e.g., github.com/user/project)
+    required: true
+    type: string
+  - name: Port
+    description: HTTP server port
+    required: false
+    default: "8080"
+    type: string
+  - name: Author
+    description: Author name
+    required: false
+    default: "vixyninja"
+    type: string
+

@@ -1,0 +1,20 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: Database interface for {{.ServiceName}}
+ */
+ 
+package database
+
+import (
+	"database/sql"
+
+	"gorm.io/gorm"
+)
+
+type Database interface {
+	DB() *gorm.DB
+	SQL() *sql.DB
+	Close() error
+}

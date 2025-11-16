@@ -1,0 +1,103 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: PostgreSQL implementation for {{.ServiceName}}
+ */
+
+package database
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
+
+	cfgpkg "{{.ModulePath}}/internal/infrastructure/config"
+)
+
+type PostgresDatabase struct {
+	gormDB *gorm.DB
+	sqlDB  *sql.DB
+}
+
+func (p *PostgresDatabase) DB() *gorm.DB { return p.gormDB }
+func (p *PostgresDatabase) SQL() *sql.DB { return p.sqlDB }
+
+func (p *PostgresDatabase) Close() error {
+	if p.sqlDB != nil {
+		return p.sqlDB.Close()
+	}
+	return nil
+}
+
+func NewPostgres(config cfgpkg.DatabaseConfig, logLevel string) (Database, error) {
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
+		config.Host,
+		config.User,
+		config.Password,
+		config.DBName,
+		config.Port,
+		config.SSLMode,
+		config.TZ,
+	)
+
+	var gormLogLevel logger.LogLevel
+	switch logLevel {
+	case cfgpkg.LogLevelDebug:
+		gormLogLevel = logger.Info
+	case cfgpkg.LogLevelWarn:
+		gormLogLevel = logger.Warn
+	case cfgpkg.LogLevelError:
+		gormLogLevel = logger.Error
+	default:
+		gormLogLevel = logger.Warn
+	}
+
+	gormCfg := &gorm.Config{
+		Logger: logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
+			SlowThreshold:             300 * time.Millisecond,
+			LogLevel:                  gormLogLevel,
+			ParameterizedQueries:      true,
+			IgnoreRecordNotFoundError: true,
+			Colorful:                  true,
+		}),
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	}
+
+	gdb, err := gorm.Open(postgres.Open(dsn), gormCfg)
+	if err != nil {
+		return nil, fmt.Errorf("[infrastructure.database.postgres] open gorm: %w", err)
+	}
+	sdb, err := gdb.DB()
+	if err != nil {
+		return nil, fmt.Errorf("[infrastructure.database.postgres] sql db: %w", err)
+	}
+
+	// Pool
+	if config.MaxIdleConns > 0 {
+		sdb.SetMaxIdleConns(config.MaxIdleConns)
+	}
+	if config.MaxOpenConns > 0 {
+		sdb.SetMaxOpenConns(config.MaxOpenConns)
+	}
+	if config.ConnMaxLifetime > 0 {
+		sdb.SetConnMaxLifetime(config.ConnMaxLifetime)
+	}
+
+	// Ping
+	if err := sdb.Ping(); err != nil {
+		return nil, fmt.Errorf("[infrastructure.database.postgres] ping: %w", err)
+	}
+
+	return &PostgresDatabase{gormDB: gdb, sqlDB: sdb}, nil
+}

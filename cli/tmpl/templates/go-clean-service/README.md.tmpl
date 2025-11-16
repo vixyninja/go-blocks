@@ -1,0 +1,65 @@
+# {{.ServiceNameTitle}} Service
+
+A Go service following Clean Architecture principles.
+
+## Structure
+
+This service follows Clean Architecture with the following layers:
+
+- **Domain**: Core business logic and entities
+- **Infrastructure**: Database, configuration, external services
+- **Use Case**: Business logic orchestration
+- **Interface**: HTTP/gRPC/WebSocket handlers, routes, schemas
+
+## Commands
+
+- `cmd/server`: Main server (API + Workers)
+- `cmd/api`: API-only server
+- `cmd/migrate`: Database migrations
+- `cmd/worker`: Background workers
+
+## Getting Started
+
+1. Install dependencies:
+```bash
+go mod download
+```
+
+2. Set up environment variables:
+```bash
+export DATABASE_HOST=localhost
+export DATABASE_PORT=5432
+export DATABASE_USER=postgres
+export DATABASE_PASSWORD=postgres
+export DATABASE_DBNAME={{.ServiceName}}
+export SERVER_PORT={{.Port}}
+```
+
+3. Run migrations:
+```bash
+go run ./cmd/migrate
+```
+
+4. Start the server:
+```bash
+go run ./cmd/server
+```
+
+## Building
+
+```bash
+make build
+```
+
+## Docker
+
+```bash
+docker-compose -f build/docker-compose.yml up
+```
+
+## Testing
+
+```bash
+make test
+```
+

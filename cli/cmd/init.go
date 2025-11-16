@@ -40,5 +40,6 @@ func init() {
 	scaffoldNewCmd.Flags().StringP("output", "o", "", "Output directory (default: ./<project-name>)")
 	scaffoldNewCmd.Flags().StringP("module", "m", "", "Go module path (e.g., github.com/user/project)")
 	scaffoldNewCmd.Flags().BoolP("force", "f", false, "Force overwrite existing directory")
+	scaffoldNewCmd.Flags().StringArray("var", []string{}, "Template variables in format key=value (can be used multiple times)")
 
 }

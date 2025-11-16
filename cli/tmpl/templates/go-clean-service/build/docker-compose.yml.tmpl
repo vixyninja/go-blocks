@@ -1,0 +1,24 @@
+name: {{.ServiceName}}
+
+services:
+  service:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+      args:
+        ENV: ${ENV:-dev}
+    container_name: {{.ServiceName}}-${ENV:-dev}
+    image: {{.ServiceName}}:${ENV:-dev}
+    env_file:
+      - .env.${ENV:-dev}
+    networks:
+      - infrastructure_local_net
+    ports:
+      - "{{.Port}}:8080"
+    environment:
+      - ENV=${ENV:-dev}
+
+networks:
+  infrastructure_local_net:
+    external: true
+

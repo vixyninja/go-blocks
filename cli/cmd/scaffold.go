@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/vixyninja/go-blocks/cli/tmpl"
@@ -59,10 +60,24 @@ Example:
 		variables := make(map[string]any)
 		variables["ProjectName"] = projectName
 
+		// Get variables from --var flags (format: key=value)
+		varFlags, _ := cmd.Flags().GetStringArray("var")
+		for _, varFlag := range varFlags {
+			parts := strings.SplitN(varFlag, "=", 2)
+			if len(parts) == 2 {
+				variables[parts[0]] = parts[1]
+			}
+		}
+
 		// Collect variables from flags or use defaults
 		for _, varDef := range templateInfo.Variables {
 			if varDef.Name == "ProjectName" {
 				continue // Already set
+			}
+
+			// Skip if already set via --var
+			if _, exists := variables[varDef.Name]; exists {
+				continue
 			}
 
 			// Try to get from flag
