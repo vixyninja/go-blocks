@@ -47,6 +47,7 @@ require (
 	golang.org/x/term v0.36.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (

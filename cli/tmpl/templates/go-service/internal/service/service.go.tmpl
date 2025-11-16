@@ -1,0 +1,24 @@
+/**
+ * @ Author: {{.Author}}
+ * @ Create Time: {{.CreateTime}}
+ * @ Modified time: {{.ModifiedTime}}
+ * @ Description: Service layer for {{.ProjectName}}
+ */
+
+package service
+
+// Service represents the business logic layer
+type Service struct {
+	// Add your service dependencies here
+}
+
+// New creates a new service instance
+func New() *Service {
+	return &Service{}
+}
+
+// Example method
+func (s *Service) GetMessage() string {
+	return "Hello from {{.ProjectName}}"
+}
+
