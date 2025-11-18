@@ -3,8 +3,8 @@ name: {{.ServiceName}}
 services:
   service:
     build:
-      context: ..
-      dockerfile: build/Dockerfile
+      context: .
+      dockerfile: Dockerfile
       args:
         ENV: ${ENV:-dev}
     container_name: {{.ServiceName}}-${ENV:-dev}
