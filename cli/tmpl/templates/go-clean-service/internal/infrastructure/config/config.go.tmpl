@@ -8,22 +8,31 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/viper"
+	"github.com/subosito/gotenv"
+	"github.com/vixyninja/go-blocks/logx"
 )
 
 var globalConfig Config
 
 func Load() (Config, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
 	mode := os.Getenv("ENV")
-	if mode == "" {
+	if len(mode) == 0 {
 		mode = EnvironmentDevelopment
 	}
 
-	fmt.Printf("[infrastructure.config] Loading configuration for environment: %s\n", mode)
+	fmt.Printf("[infrastructure.config] Loading configuration for mode: %s\n", mode)
 
 	var path string
 	switch strings.ToLower(mode) {
@@ -37,20 +46,22 @@ func Load() (Config, error) {
 		return nil, fmt.Errorf("[infrastructure.config] unsupported environment: %s", mode)
 	}
 
+	envFile := filepath.Join(wd, path)
+	if err := gotenv.Load(envFile); err != nil {
+		return nil, fmt.Errorf("[infrastructure.config] failed to load env file '%s': %w", envFile, err)
+	}
+
 	v := viper.New()
 	bindEnv(v)
 
-	v.SetConfigFile(path)
+	v.SetConfigFile(envFile)
 	v.SetConfigType("env")
-
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return nil, fmt.Errorf("[infrastructure.config] failed to read config file: %w", err)
-		}
-	}
-
 	v.AutomaticEnv()
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	if err := v.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("[config] failed to read config file '%s': %w", path, err)
+	}
 
 	// Unmarshal config
 	config := &AppConfig{}
@@ -76,7 +87,7 @@ func Get() Config {
 
 // bindEnv binds the environment variables to the viper instance
 func bindEnv(v *viper.Viper) {
-	_ = v.BindEnv("env", "ENV")
+	_ = v.BindEnv("mode", "MODE")
 
 	// Server
 	_ = v.BindEnv("server.port", "SERVER_PORT")
@@ -115,7 +126,6 @@ func bindEnv(v *viper.Viper) {
 	_ = v.BindEnv("log.max_age", "LOG_MAX_AGE")
 	_ = v.BindEnv("log.compress", "LOG_COMPRESS")
 }
-
 
 func (c *AppConfig) Validate() error {
 	if c.Server.Port == "" {

@@ -36,7 +36,7 @@ const (
 )
 
 type AppConfig struct {
-	Env      string         `mapstructure:"env"`
+	Mode     string         `mapstructure:"mode"`
 	Server   ServerConfig   `mapstructure:"server"`
 	Database DatabaseConfig `mapstructure:"database"`
 	Log      LogConfig      `mapstructure:"log"`
@@ -54,8 +54,8 @@ func (c *AppConfig) GetLog() LogConfig {
 	return c.Log
 }
 
-func (c *AppConfig) GetEnvironment() string {
-	return c.Env
+func (c *AppConfig) GetMode() string {
+	return c.Mode
 }
 
 type Config interface {
@@ -63,7 +63,7 @@ type Config interface {
 	GetServer() ServerConfig
 	GetDatabase() DatabaseConfig
 	GetLog() LogConfig
-	GetEnvironment() string
+	GetMode() string
 }
 
 type ServerConfig struct {

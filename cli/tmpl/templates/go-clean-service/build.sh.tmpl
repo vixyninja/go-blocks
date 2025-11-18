@@ -14,7 +14,6 @@ fi
 echo "Building environment: $ENV"
 echo "Using env file: $ENV_FILE"
 
-cd build
 ENV=$ENV docker compose --env-file ".env.${ENV}" up --build -d
 
 echo ""
