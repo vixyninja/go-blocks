@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/redis/go-redis/v9"
+	redis "github.com/redis/go-redis/v9"
 )
 
 func TryLock(ctx context.Context, key, value string, ttl time.Duration) (bool, error) {
