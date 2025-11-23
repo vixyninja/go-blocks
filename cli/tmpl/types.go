@@ -1,10 +1,3 @@
-/**
- * @ Author: vixyninja
- * @ Create Time: 2025-11-16 09:13
- * @ Modified time: 2025-11-16 09:13
- * @ Description: Type definitions for template generator
- */
-
 package tmpl
 
 // Config represents the configuration for project generation

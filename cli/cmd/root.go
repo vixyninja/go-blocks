@@ -1,10 +1,3 @@
-/**
- * @ Author: vixyninja
- * @ Create Time: 2025-11-14 09:45:16
- * @ Modified time: 2025-11-14 11:30:18
- * @ Description: Root command
- */
-
 package cmd
 
 import (

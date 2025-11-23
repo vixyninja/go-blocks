@@ -1,10 +1,3 @@
-/**
- * @ Author: vixyninja
- * @ Create Time: 2025-11-16 07:57
- * @ Modified time: 2025-11-16 07:57
- * @ Description: Core generator logic
- */
-
 package tmpl
 
 import (

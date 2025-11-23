@@ -1,10 +1,3 @@
-/**
- * @ Author: vixyninja
- * @ Create Time: 2025-11-16 09:06
- * @ Modified time: 2025-11-16 09:10
- * @ Description: Template renderer using Go text/template
- */
-
 package tmpl
 
 import (

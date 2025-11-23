@@ -1,10 +1,3 @@
-/**
- * @ Author: vixyninja
- * @ Create Time: 2025-11-16 08:59
- * @ Modified time: 2025-11-16 09:13
- * @ Description: Input and template validation
- */
-
 package tmpl
 
 import (

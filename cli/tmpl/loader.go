@@ -1,10 +1,3 @@
-/**
- * @ Author: vixyninja
- * @ Create Time: 2025-11-16 07:40
- * @ Modified time: 2025-11-16 07:40
- * @ Description: Template loader from file system
- */
-
 package tmpl
 
 import (

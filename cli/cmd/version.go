@@ -1,10 +1,3 @@
-/**
- * @ Author: vixyninja
- * @ Create Time: 2025-11-14 09:48:00
- * @ Modified time: 2025-11-14 11:14:02
- * @ Description: Version information
- */
-
 package cmd
 
 import (

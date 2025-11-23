@@ -1,10 +1,3 @@
-/**
- * @ Author: vixyninja
- * @ Create Time: 2025-11-14 11:17:03
- * @ Modified time: 2025-11-14 12:00:00
- * @ Description: Scaffold command for generating projects from templates
- */
-
 package cmd
 
 import (
